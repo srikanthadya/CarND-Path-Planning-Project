@@ -4,7 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+<<<<<<< HEAD
   "/home/workspace/CarND-Path-Planning-Project/src/main.cpp" "/home/workspace/CarND-Path-Planning-Project/build/CMakeFiles/path_planning.dir/src/main.cpp.o"
+=======
+  "/mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/src/main.cpp" "/mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/build/CMakeFiles/path_planning.dir/src/main.cpp.o"
+>>>>>>> 10ea8ee64e709c2531a659373b281be850f89a3c
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
