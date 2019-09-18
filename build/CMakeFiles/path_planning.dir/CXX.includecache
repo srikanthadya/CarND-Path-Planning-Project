@@ -855,4 +855,16 @@ helpers.h
 /mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/src/helpers.h
 json.hpp
 /mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/src/json.hpp
+spline.h
+/mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/src/spline.h
+
+/mnt/a/SoftwareInstalls/DeepLearning/git_repos/CarND-Path-Planning-Project/CarND-Path-Planning-Project/src/spline.h
+cstdio
+-
+cassert
+-
+vector
+-
+algorithm
+-
 
