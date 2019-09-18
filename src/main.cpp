@@ -7,6 +7,7 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "helpers.h"
 #include "json.hpp"
+#include "spline.h"
 
 // for convenience
 using nlohmann::json;
@@ -49,8 +50,13 @@ int main() {
     map_waypoints_dx.push_back(d_x);
     map_waypoints_dy.push_back(d_y);
   }
+// set initial lane 
+    int lane = 1;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
+    // setting reference velocity just below the allowable. 
+    double ref_vel = 0.0;
+  
+  h.onMessage([&ref_vel, &lane,&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,
                &map_waypoints_dx,&map_waypoints_dy]
               (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                uWS::OpCode opCode) {
@@ -87,18 +93,174 @@ int main() {
           // Sensor Fusion Data, a list of all other cars on the same side 
           //   of the road.
           auto sensor_fusion = j[1]["sensor_fusion"];
+          
+          
 
           json msgJson;
+          
+          // Add two points from the previous path to the points list that will be used to generate the spline
+          // this will help in smooth transition between to line segments. 
+          int prev_size = previous_path_x.size();
+          
+          // Sensor Fusion
+          if (prev_size>0) 
+          {
+            car_s = end_path_s;
+          }
+          
+          bool too_close = false;
+          
+          for (int i=0; i < sensor_fusion.size(); i++)
+          {
+            float d = sensor_fusion[i][6];
+            
+            if ((d < (2+4*lane+2)) && (d > (2+4*lane-2)))
+            {
+              double vx = sensor_fusion[i][3];
+              double vy = sensor_fusion[i][4];
+              double check_speed = sqrt((vx*vx)+(vy*vy));
+              double check_car_s = sensor_fusion[i][5];
+              
+              check_car_s += ((double)prev_size*0.02*check_speed);
+              if ((check_car_s > car_s) && ((check_car_s - car_s) < 30))
+              {
+                too_close = true;
+                
+                // Behavioral Planning
+                if (lane > 0)
+                {
+                  
+                  lane = 0;
+                }
+                
+                
+                
+              }
+              
+            }
+          }
+          
+          if (too_close)
+          {
+            ref_vel -=0.224;
+            
+          }
+          else if (ref_vel < 49.5)
+          {
+            ref_vel +=0.224;
+          }
+          
+          
+          vector<double> ptsx;
+          vector<double> ptsy;
 
+          double ref_x = car_x;
+          double ref_y = car_y;
+          double ref_yaw = deg2rad(car_yaw);
+          
+          // Since at the first step there are no previous points available , using the car_x, car_y to estimate 
+          // the previous point using the car_yar value.
+          if (prev_size < 2)
+          {
+            double prev_car_x = car_x - cos(car_yaw);
+            double prev_car_y = car_y - sin(car_yaw);
+            ptsx.push_back(prev_car_x);
+            ptsx.push_back(car_x);
+            ptsy.push_back(prev_car_y);
+            ptsy.push_back(car_y);
+
+          }
+          
+          // From next step on, appending the last two points from the previous path
+          else
+          {
+            ref_x = previous_path_x[prev_size-1];
+            ref_y = previous_path_y[prev_size-1];
+
+            double prev_x_ref = previous_path_x[prev_size-2];
+            double prev_y_ref = previous_path_y[prev_size-2];
+            ref_yaw = atan2(ref_y - prev_y_ref,ref_x - prev_x_ref);
+            
+            
+            ptsx.push_back(prev_x_ref);
+            ptsx.push_back(ref_x);
+            ptsy.push_back(prev_y_ref);
+            ptsy.push_back(ref_y);
+          }
+          
+
+          // Projecting the previous two path points 30,60 and 90 units further in the curret lane
+          vector<double> next_wp0 = getXY(car_s+30,(2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp1 = getXY(car_s+60,(2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          vector<double> next_wp2 = getXY(car_s+90,(2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+          
+          // Appending the 3 new points to the points array. 
+          ptsx.push_back(next_wp0[0]);
+          ptsx.push_back(next_wp1[0]);
+          ptsx.push_back(next_wp2[0]);
+          
+          ptsy.push_back(next_wp0[1]);
+          ptsy.push_back(next_wp1[1]);
+          ptsy.push_back(next_wp2[1]);
+          
+
+          for (int i=0;i < ptsx.size(); i++)
+          {
+            double shift_x = ptsx[i] - ref_x;
+            double shift_y = ptsy[i] - ref_y;
+            
+            ptsx[i] = (shift_x*cos(0-ref_yaw)-shift_y*sin(0-ref_yaw));
+            ptsy[i] = (shift_x*sin(0-ref_yaw)+shift_y*cos(0-ref_yaw));
+
+          }         
+
+          // Define and initialize spline
+
+          tk::spline s;
+          
+          s.set_points(ptsx,ptsy);
+
+           
           vector<double> next_x_vals;
           vector<double> next_y_vals;
+          
+          for (int i=0;i<prev_size;i++)
 
-          /**
-           * TODO: define a path made up of (x,y) points that the car will visit
-           *   sequentially every .02 seconds
-           */
+          {
+            next_x_vals.push_back(previous_path_x[i]);
+            next_y_vals.push_back(previous_path_y[i]);
+          }
 
+          double target_x = 30.0;
+          double target_y = s(target_x);
+          double target_dist = sqrt((target_x*target_x)+(target_y*target_y));
 
+          double x_addon = 0;
+
+          for (int i=0; i<50-prev_size; i++)
+
+          {
+            double N = target_dist/(0.02*ref_vel/2.24);
+            double x_point = x_addon + (target_x/N);
+            double y_point = s(x_point);
+
+            x_addon = x_point;
+            
+            double x_ref = x_point;
+            double y_ref = y_point;
+            
+            x_point = (x_ref*cos(ref_yaw) - y_ref*sin(ref_yaw));
+            y_point = (x_ref*sin(ref_yaw) + y_ref*cos(ref_yaw));
+            
+                       
+            x_point += ref_x;
+            y_point += ref_y;
+            
+            next_x_vals.push_back(x_point);
+            next_y_vals.push_back(y_point);
+          }
+          
+          
           msgJson["next_x"] = next_x_vals;
           msgJson["next_y"] = next_y_vals;
 
