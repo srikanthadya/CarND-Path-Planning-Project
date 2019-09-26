@@ -88,6 +88,14 @@ The car successfully went around the simulator track without any collision or je
 
 ![](result.png)
 
+## Improvements
+
+There are several limitations due to the simplified Finite State Machine assumption used in this implementation. 
+
+1. The ego car always choses the left lane first irrespective of the lane availability. The car doesnt have a way to identify the faster of the two lanes to make a lane change decision. 
+2. The cost associated with lane change is only binary in this implementation ie. safe to change lane or not. A more descriptive cost function could help go around the track faster.
+3. The sensor fusion data is used to check where the neighboring car is going to be in its own lane at a future time. Their heading directions are not used and hence if the tracked car does a sudden lane change we do not have a way to account for it. 
+
 ## Basic Build Instructions
 
 1. Clone this repo.
