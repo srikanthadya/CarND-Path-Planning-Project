@@ -56,6 +56,8 @@ A Finite State Machine approach has been followed in this project to define the 
 3. Lane change Left  
 4. Lane change Right 
 
+![](FSM.png)
+
 ### Keep Lane
 While the ego car is driving within the speed limit, if there is no car ahead in the lane that could cause a decelleration, this state makes the care stay in the current lane. 
 
