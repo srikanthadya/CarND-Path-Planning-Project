@@ -16,8 +16,8 @@ The goal is to safely navigate around a virtual highway with other traffic that 
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
 
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
-[highway](HighwayXY.png)
-[frenetS](FrenetS.png)
+|----------------|--------------|
+![highway](HighwayXY.png)|![frenetS](FrenetS.png)|
 
 
 ## Basic Build Instructions
