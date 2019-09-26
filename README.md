@@ -17,7 +17,7 @@ Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoi
 
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 |----------------|--------------|
-![highway](HighwayXY.png)|![frenetS](FrenetS.png)|
+![highway](HighwayXY.png =50x)|![frenetS](FrenetS.png =50x)|
 
 
 ## Basic Build Instructions
