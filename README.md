@@ -73,6 +73,21 @@ If there is no room to change either left or right, we reduce the speed to avoid
 Finally if there is no car ahead and we are below the speed limit, we gradually increase the speed to reach the allowable speed such that the jerk condition is not violated. 
 
 
+## Trajectory Planning
+
+The trajectory that the ego car needs to take to drive around the simulator track should be such that there are no sudden lateral or longitudinal accelerations that could case the ego car to violate the jerk constraint. To meet this criteria, this implementation follows the spline approach suggested in the walkthrough video. 
+
+A spline fits a smooth curve through the points we desire to pass through. In this case we use 5 control points through which we want the spline to be fit. Of these 5 points, we reuse two points from the previous path so that the transition is smooth between the two splines. The other three points are chosen such that they are 30, 60 and 90 meters ahead of the ego car. This can be found between lines 189-250 in `main.cpp`.
+
+The spline function can now be used to find all the points required for a smooth path curve. Assuming we want to fit a curve that takes us 30m ahead, given a reference velocity and the controller update rate of the simulator, we can get the number of points required and find their interpolated x and y points that can be fed back to the simulator. 
+
+
+## Result 
+
+The car successfully went around the simulator track without any collision or jerk violation. The final state is shown below. The link to the video can be found here 
+
+![](result.png)
+
 ## Basic Build Instructions
 
 1. Clone this repo.
