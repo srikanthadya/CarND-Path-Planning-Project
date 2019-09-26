@@ -21,6 +21,17 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 |:----------------:|:--------------:|
 ![](HighwayXY.png)|![](FrenetS.png)|
 
+## Why use Frenet Coordinates?
+
+Representing curved road profiles in a cartesian coordinate system is sometimes cumbersome. Tasks like determining the lane in which a car is, in cartesian coordinates adds unneccessary complications. Projecting the X,Y s to a Frenet coordinate space helps us over come this problem. The `s` dimentsion increases with the length of the lane from the starting point. The `d` dimension is centered on the lane center. In this project the lanes are 4m wide and the highway has three lanes. That implies, 
+
+| d range | lane |
+|:-------:|:-----:|
+` 0 < d < 4 ` |left lane|
+`4 < d < 8 ` | center lane |
+` 8 < d < 12 ` | right lane |
+
+![](cartVsFre.png)
 
 ## Basic Build Instructions
 
