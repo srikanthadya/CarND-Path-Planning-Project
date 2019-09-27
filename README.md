@@ -51,7 +51,7 @@ A Finite State Machine approach has been followed in this project to define the 
 ![](FSM.png)
 
 ### Keep Lane
-While the ego car is driving within the speed limit, if there is no car ahead in the lane that could cause a decelleration, this state makes the care stay in the current lane. 
+While the ego car is driving within the speed limit, if there is no car ahead in the lane that could cause a deceleration, this state makes the car stay in the current lane. 
 
 ### Prepare Lane Change Left/Right
 If we sense a car ahead in our current lane, we first look to the left lane (provided we are not in the left most lane already) and check if there is a car adjacent to us or within 30m ahead or behind the ego car. 
