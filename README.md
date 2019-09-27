@@ -76,7 +76,7 @@ The spline function can now be used to find all the points required for a smooth
 
 ## Result 
 
-The car successfully went around the simulator track without any collision or jerk violation. The final state is shown below. The link to the video can be found here 
+The car successfully went around the simulator track without any collision or jerk violation. The final state is shown below. The link to the video can be found [here](https://youtu.be/0Rb1QsdWksU) 
 
 ![](result.png)
 
